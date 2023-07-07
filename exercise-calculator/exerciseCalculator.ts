@@ -1,11 +1,11 @@
-import { isNotNumber } from "./utils";
+import { isNotNumber } from './utils';
 
 interface Result {
   periodLength: number;
   trainingDays: number;
   success: boolean;
   rating: 1 | 2 | 3;
-  ratingDescription: "bad" | "not too bad but could be better" | "good";
+  ratingDescription: 'bad' | 'not too bad but could be better' | 'good';
   target: number;
   average: number;
 }
@@ -21,15 +21,15 @@ const calculateExercises = (hours: number[], target: number): Result => {
   switch (true) {
     case average < target / 2:
       rating = 1 as const;
-      ratingDescription = "bad" as const;
+      ratingDescription = 'bad' as const;
       break;
     case average < target:
       rating = 2 as const;
-      ratingDescription = "not too bad but could be better" as const;
+      ratingDescription = 'not too bad but could be better' as const;
       break;
     default:
       rating = 3 as const;
-      ratingDescription = "good" as const;
+      ratingDescription = 'good' as const;
       break;
   }
   return {
@@ -43,13 +43,13 @@ const calculateExercises = (hours: number[], target: number): Result => {
   };
 };
 
-const parseExerciseArguments = (args: String[]): [number[], number] => {
-  if (args.length < 4) throw new Error("Not enough arguments");
+const parseExerciseArguments = (args: string[]): [number[], number] => {
+  if (args.length < 4) throw new Error('Not enough arguments');
 
   const full = args.slice(2);
   full.forEach((a) => {
     if (isNotNumber(a)) {
-      throw new Error("Provided values were not numbers!");
+      throw new Error('Provided values were not numbers!');
     }
   });
   return [full.slice(1).map((a) => Number(a)), Number(full[0])];
@@ -59,7 +59,7 @@ try {
   const [hours, target] = parseExerciseArguments(process.argv);
   console.log(calculateExercises(hours, target));
 } catch (error: unknown) {
-  let errorMessage = "Error: ";
+  let errorMessage = 'Error: ';
   if (error instanceof Error) {
     errorMessage += error.message;
   }

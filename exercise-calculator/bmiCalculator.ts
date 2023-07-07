@@ -30,7 +30,7 @@ export const calculateBmi = (height: number, weight: number): string => {
   }
 };
 
-const parseArguments = (args: String[]): number[] => {
+const parseArguments = (args: string[]): number[] => {
   if (args.length < 4) throw new Error('Not enough arguments');
   if (args.length > 4) throw new Error('Too many arguments');
 

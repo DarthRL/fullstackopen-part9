@@ -1,5 +1,3 @@
-import { isNotNumber } from './utils';
-
 export const calculateBmi = (height: number, weight: number): string => {
   const bmi = parseFloat((weight / (height / 100) ** 2).toFixed(1));
   switch (true) {
@@ -30,24 +28,3 @@ export const calculateBmi = (height: number, weight: number): string => {
   }
 };
 
-const parseArguments = (args: string[]): number[] => {
-  if (args.length < 4) throw new Error('Not enough arguments');
-  if (args.length > 4) throw new Error('Too many arguments');
-
-  if (!isNotNumber && !isNotNumber) {
-    return [Number(args[2]), Number(args[3])];
-  } else {
-    throw new Error('Provided values were not numbers!');
-  }
-};
-
-try {
-  const [height, weight] = parseArguments(process.argv);
-  console.log(calculateBmi(height, weight));
-} catch (error: unknown) {
-  let errorMessage = 'Error: ';
-  if (error instanceof Error) {
-    errorMessage += error.message;
-  }
-  console.log(errorMessage);
-}

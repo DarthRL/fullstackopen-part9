@@ -1,8 +1,7 @@
+import { CoursePart } from "../types";
+
 interface TotalProps {
-  courseParts: {
-    name: string;
-    exerciseCount: number;
-  }[];
+  courseParts: CoursePart[];
 }
 
 const Total = ({ courseParts }: TotalProps) => {

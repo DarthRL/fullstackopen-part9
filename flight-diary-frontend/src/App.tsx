@@ -50,23 +50,25 @@ const App = () => {
         <div>
           <label>date</label>
           <input
+            type="date"
             value={date}
             onChange={event => setDate(event.target.value)}
           ></input>
         </div>
         <div>
-          <label>visibility</label>
-          <input
-            value={visibility}
-            onChange={event => setVisibility(event.target.value)}
-          ></input>
+          <label>visibility&nbsp;&nbsp;&nbsp;</label>
+          &nbsp;&nbsp;&nbsp;great<input type="radio" name="visibility" onChange={() => setVisibility('great')}/>
+          &nbsp;&nbsp;&nbsp;good<input type="radio" name="visibility" onChange={() => setVisibility('good')}/>
+          &nbsp;&nbsp;&nbsp;ok<input type="radio" name="visibility" onChange={() => setVisibility('ok')}/>
+          &nbsp;&nbsp;&nbsp;poor<input type="radio" name="visibility" onChange={() => setVisibility('poor')}/>
         </div>
         <div>
-          <label>weather</label>
-          <input
-            value={weather}
-            onChange={event => setWeather(event.target.value)}
-          ></input>
+          <label>weather&nbsp;&nbsp;&nbsp;</label>
+          &nbsp;&nbsp;&nbsp;sunny<input type="radio" name='weather' onChange={() => setWeather('sunny')}/>
+          &nbsp;&nbsp;&nbsp;rainy<input type="radio" name='weather' onChange={() => setWeather('rainy')}/>
+          &nbsp;&nbsp;&nbsp;cloudy<input type="radio" name='weather' onChange={() => setWeather('cloudy')}/>
+          &nbsp;&nbsp;&nbsp;stormy<input type="radio" name='weather' onChange={() => setWeather('stormy')}/>
+          &nbsp;&nbsp;&nbsp;windy<input type="radio" name='weather' onChange={() => setWeather('windy')}/>
         </div>
         <div>
           <label>comment</label>

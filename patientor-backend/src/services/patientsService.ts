@@ -1,6 +1,8 @@
 import patientData from '../../data/patients';
 import {
+  Gender,
   NewPatientEntry,
+  Patient,
   PatientEntry,
   PatientEntryWithoutSsn,
 } from '../types';
@@ -10,6 +12,19 @@ const patients: PatientEntry[] = patientData;
 
 const getPatients = () => {
   return patients;
+};
+
+const getPatientById = (id: string): Patient | undefined => {
+  const patient = patients.find((p) => p.id === id);
+  if (patient) {
+    const gender = patient.gender as Gender;
+    return {
+      ...patient,
+      gender: gender,
+      entries: [],
+    };
+  }
+  return patient;
 };
 
 const getPatientsWithoutSsn = (): PatientEntryWithoutSsn[] => {
@@ -34,5 +49,6 @@ const addPatient = (entry: NewPatientEntry): PatientEntry => {
 export default {
   getPatients,
   getPatientsWithoutSsn,
-  addPatient
+  addPatient,
+  getPatientById,
 };

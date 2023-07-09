@@ -1,4 +1,4 @@
-import { Gender, NewPatientEntry } from './types';
+import { Entry, Gender, NewPatient } from './types';
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
@@ -19,7 +19,7 @@ const parseName = (name: unknown): string => {
   return name;
 };
 const parseDate = (date: unknown): string => {
-  if (!date || !isString(date) || isDate(date)) {
+  if (!date || !isString(date) || !isDate(date)) {
     throw new Error('Incorrect or missing date');
   }
   return date;
@@ -36,14 +36,33 @@ const parseOccupation = (occupation: unknown): string => {
   }
   return occupation;
 };
-const parseGender = (gender: unknown): string => {
-  if (!gender || !isString(gender) || isGender(gender)) {
+const parseGender = (gender: unknown): Gender => {
+  if (!gender || !isString(gender) || !isGender(gender)) {
     throw new Error('Incorrect or missing gender');
   }
   return gender;
 };
+const parseEntries = (entries: unknown): Entry[] => {
+  if (!entries || !Array.isArray(entries))
+  {
+    throw new Error('Incorrect or missing entries');
+  }
+  else {
+    entries.forEach((entry) => {
+      if (
+        !entry ||
+        (entry.type !== 'Hospital' &&
+        entry.type !== 'OccupationalHealthcare' &&
+        entry.type !== 'HealthCheck')
+        ) {
+        throw new Error('Incorrect or missing entries');
+      }
+    });
+  }
+  return entries as Entry[];
+};
 
-const toNewPatientEntry = (object: unknown): NewPatientEntry => {
+const toNewPatient = (object: unknown): NewPatient => {
   if (!object || typeof object !== 'object') {
     throw new Error('Incorrect or missing data');
   }
@@ -52,18 +71,20 @@ const toNewPatientEntry = (object: unknown): NewPatientEntry => {
     'dateOfBirth' in object &&
     'ssn' in object &&
     'gender' in object &&
-    'occupation' in object
+    'occupation' in object &&
+    'entries' in object
   ) {
-    const newEntry: NewPatientEntry = {
+    const newPatient: NewPatient = {
       name: parseName(object.name),
       dateOfBirth: parseDate(object.dateOfBirth),
       ssn: parseSsn(object.ssn),
       gender: parseGender(object.gender),
       occupation: parseOccupation(object.occupation),
+      entries: parseEntries(object.entries),
     };
-    return newEntry;
+    return newPatient;
   }
   throw new Error('Incorrect data: some fields are missing');
 };
 
-export default toNewPatientEntry;
+export default toNewPatient;

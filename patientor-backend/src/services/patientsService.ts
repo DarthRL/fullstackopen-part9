@@ -1,14 +1,12 @@
 import patientData from '../../data/patients';
 import {
-  Gender,
-  NewPatientEntry,
+  NewPatient,
   Patient,
-  PatientEntry,
   PatientEntryWithoutSsn,
 } from '../types';
 import { v1 as uuid } from 'uuid';
 
-const patients: PatientEntry[] = patientData;
+const patients: Patient[] = patientData;
 
 const getPatients = () => {
   return patients;
@@ -16,14 +14,6 @@ const getPatients = () => {
 
 const getPatientById = (id: string): Patient | undefined => {
   const patient = patients.find((p) => p.id === id);
-  if (patient) {
-    const gender = patient.gender as Gender;
-    return {
-      ...patient,
-      gender: gender,
-      entries: [],
-    };
-  }
   return patient;
 };
 
@@ -37,14 +27,14 @@ const getPatientsWithoutSsn = (): PatientEntryWithoutSsn[] => {
   }));
 };
 
-const addPatient = (entry: NewPatientEntry): PatientEntry => {
-  const newPatientEntry = {
+const addPatient = (entry: NewPatient): Patient => {
+  const newPatient = {
     id: uuid(),
     ...entry,
   };
 
-  patients.push(newPatientEntry);
-  return newPatientEntry;
+  patients.push(newPatient);
+  return newPatient;
 };
 export default {
   getPatients,

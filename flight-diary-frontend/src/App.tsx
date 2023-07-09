@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { NonSensitiveDiaryEntry } from './types';
 import { createDiary, getAllDiaries } from './services/diaryService';
+import axios from 'axios';
 
 const App = () => {
   const [diaries, setDiaries] = useState<NonSensitiveDiaryEntry[]>([]);
@@ -15,16 +16,36 @@ const App = () => {
   const [weather, setWeather] = useState<string>('');
   const [comment, setComment] = useState<string>('');
 
+  const [error, setError] = useState<string>('');
+
   const diaryCreation = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    createDiary({ date, visibility, weather, comment }).then(data =>
-      setDiaries(diaries.concat(data))
-    );
+    createDiary({ date, visibility, weather, comment })
+      .then(data => {
+        setDiaries(diaries.concat(data));
+        setDate('');
+        setVisibility('');
+        setWeather('');
+        setComment('');
+      })
+      .catch(error => {
+        if (axios.isAxiosError(error)) {
+          if (error.response) {
+            setError(error.response.data.replace('Something went wrong.', ''));
+            setTimeout(() => {
+              setError('');
+            }, 5000);
+          } else console.log(error);
+        } else {
+          console.log(error);
+        }
+      });
   };
 
   return (
     <div>
       <h2>Add new entry</h2>
+      <p style={{ color: 'red' }}>{error}</p>
       <form onSubmit={diaryCreation}>
         <div>
           <label>date</label>

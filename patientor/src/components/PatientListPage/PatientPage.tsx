@@ -4,6 +4,8 @@ import FemaleIcon from '@mui/icons-material/Female';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import patientService from '../../services/patients';
+import EntryBlock from './EntryBlock';
+import { Box } from '@mui/material';
 
 interface Props {
   diagnoses: Diagnosis[];
@@ -36,22 +38,9 @@ const PatientPage = ({ diagnoses }: Props) => {
       <div>ssn: {patient.ssn}</div>
       <div>occupation: {patient.occupation}</div>
       <h3>entries</h3>
-      {patient.entries.map((e) => (
-        <div key={e.id}>
-          <div>
-            {e.date} <i>{e.description}</i>
-          </div>
-          {!e.diagnosisCodes ? null : (
-            <ul>
-              {e.diagnosisCodes.map((code) => (
-                <li key={code}>
-                  {code} {diagnoses.find((d) => d.code === code)?.name}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      ))}
+        {patient.entries.map((e) => (
+          <EntryBlock key={e.id} entry={e} diagnoses={diagnoses} />
+        ))}
     </div>
   );
 };

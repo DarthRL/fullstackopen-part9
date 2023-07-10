@@ -108,7 +108,6 @@ const parseHealthCheckRating = (
   healthCheckRating: unknown
 ): HealthCheckRating => {
   if (
-    !healthCheckRating ||
     !(typeof healthCheckRating === 'number') ||
     !isHealthCheckRating(healthCheckRating)
   ) {

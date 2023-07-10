@@ -9,13 +9,18 @@ import {
   Alert,
   Box,
   Button,
+  Chip,
   FormControl,
   InputLabel,
   MenuItem,
+  OutlinedInput,
   Select,
   TextField,
 } from '@mui/material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import axios from 'axios';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
 
 interface Props {
   diagnoses: Diagnosis[];
@@ -27,6 +32,13 @@ const genderIcon = {
   other: null,
 };
 
+const healthCheckRatingIcons = [
+  <FavoriteIcon style={{ color: 'green' }} />,
+  <FavoriteIcon style={{ color: 'yellow' }} />,
+  <FavoriteIcon style={{ color: 'orange' }} />,
+  <FavoriteIcon style={{ color: 'red' }} />,
+];
+
 const PatientPage = ({ diagnoses }: Props) => {
   const [patient, setPatient] = useState<Patient | null>();
   const id = useParams().id;
@@ -37,14 +49,22 @@ const PatientPage = ({ diagnoses }: Props) => {
   const [error, setError] = useState<string>('');
   const [type, setType] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [date, setDate] = useState<string>('');
+  const [date, setDate] = useState<string>(
+    dayjs(new Date()).format('YYYY-MM-DD')
+  );
   const [specialist, setSpecialist] = useState<string>('');
   const [healthCheckRating, setHealthCeckRating] = useState<string>('');
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
-  const [dischargeDate, setDischargeDate] = useState<string>('');
+  const [dischargeDate, setDischargeDate] = useState<string>(
+    dayjs(new Date()).format('YYYY-MM-DD')
+  );
   const [dischargeCriteria, setDischargeCriteria] = useState<string>('');
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
+  const [startDate, setStartDate] = useState<string>(
+    dayjs(new Date()).format('YYYY-MM-DD')
+  );
+  const [endDate, setEndDate] = useState<string>(
+    dayjs(new Date()).format('YYYY-MM-DD')
+  );
   const [employerName, setEmployerName] = useState<string>('');
 
   if (!patient) return <div>Loading</div>;
@@ -101,11 +121,11 @@ const PatientPage = ({ diagnoses }: Props) => {
       setSpecialist('');
       setHealthCeckRating('');
       setDiagnosisCodes([]);
-      setDischargeDate('')
-      setDischargeCriteria('')
-      setEmployerName('')
-      setStartDate('')
-      setEndDate('')
+      setDischargeDate('');
+      setDischargeCriteria('');
+      setEmployerName('');
+      setStartDate('');
+      setEndDate('');
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
@@ -131,9 +151,7 @@ const PatientPage = ({ diagnoses }: Props) => {
 
       <Box sx={{ marginY: 2, p: 2, border: '1px dashed' }}>
         <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-          <InputLabel id="demo-simple-select-standard-label">
-            Adding Entry Type
-          </InputLabel>
+          <InputLabel id="type-label">Adding Entry Type</InputLabel>
           <Select
             labelId="type-label"
             id="type"
@@ -161,15 +179,14 @@ const PatientPage = ({ diagnoses }: Props) => {
               value={description}
               onChange={(event) => setDescription(event.target.value)}
             />{' '}
-            <TextField
-              required
-              fullWidth
-              margin="normal"
-              id="date"
-              label="Date"
-              value={date}
-              onChange={(event) => setDate(event.target.value)}
-            />{' '}
+            <DatePicker
+              sx={{ marginY: 2 }}
+              label="Date *"
+              value={dayjs(date)}
+              onChange={(value) => {
+                if (value) setDate(dayjs(value.toDate()).format('YYYY-MM-DD'));
+              }}
+            />
             <TextField
               required
               fullWidth
@@ -179,25 +196,62 @@ const PatientPage = ({ diagnoses }: Props) => {
               value={specialist}
               onChange={(event) => setSpecialist(event.target.value)}
             />
-            <TextField
-              required
-              fullWidth
-              margin="normal"
-              id="healthCheckRating"
-              label="Healthcheck Rating"
-              value={healthCheckRating}
-              onChange={(event) => setHealthCeckRating(event.target.value)}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              id="diagnosisCodes"
-              label="Diagnosis codes"
-              value={diagnosisCodes.join(', ')}
-              onChange={(event) =>
-                setDiagnosisCodes(event.target.value.split(', '))
-              }
-            />
+            <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+              <InputLabel id="healthcheck-rating-label">
+                Healthcheck rating
+              </InputLabel>
+              <Select
+                labelId="healthcheck-rating-label"
+                id="healthcheck-rating"
+                value={healthCheckRating}
+                onChange={(event) => setHealthCeckRating(event.target.value)}
+                autoWidth
+                label="Healthcheck Rating"
+              >
+                <MenuItem value={0}>{healthCheckRatingIcons[0]}</MenuItem>
+                <MenuItem value={1}>{healthCheckRatingIcons[1]}</MenuItem>
+                <MenuItem value={2}>{healthCheckRatingIcons[2]}</MenuItem>
+                <MenuItem value={3}>{healthCheckRatingIcons[3]}</MenuItem>
+              </Select>
+            </FormControl>
+            <div>
+              <FormControl sx={{ marginY: 2, width: 300 }}>
+                <InputLabel id="diagnosis-codes-label">Chip</InputLabel>
+                <Select
+                  labelId="diagnosis-codes-label"
+                  id="diagnosis-codes"
+                  multiple
+                  value={diagnosisCodes}
+                  onChange={(event) => {
+                    setDiagnosisCodes(event.target.value as string[]);
+                  }}
+                  input={
+                    <OutlinedInput id="select-diagnosis-codes" label="Chip" />
+                  }
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} />
+                      ))}
+                    </Box>
+                  )}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 48 * 4.5 + 8,
+                        width: 250,
+                      },
+                    },
+                  }}
+                >
+                  {diagnoses.map((d) => (
+                    <MenuItem key={d.code} value={d.code}>
+                      {d.code}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
             <Button sx={{ marginY: 2 }} variant="contained" type="submit">
               ADD
             </Button>
@@ -215,14 +269,14 @@ const PatientPage = ({ diagnoses }: Props) => {
               value={description}
               onChange={(event) => setDescription(event.target.value)}
             />{' '}
-            <TextField
-              required
-              margin="normal"
-              id="date"
-              label="Date"
-              value={date}
-              onChange={(event) => setDate(event.target.value)}
-            />{' '}
+            <DatePicker
+              sx={{ marginY: 2 }}
+              label="Date *"
+              value={dayjs(date)}
+              onChange={(value) => {
+                if (value) setDate(dayjs(value.toDate()).format('YYYY-MM-DD'));
+              }}
+            />
             <TextField
               required
               fullWidth
@@ -232,34 +286,63 @@ const PatientPage = ({ diagnoses }: Props) => {
               value={specialist}
               onChange={(event) => setSpecialist(event.target.value)}
             />
-            <TextField
-              required
-              margin="normal"
-              id="dischargeDate"
-              label="Discharge Date"
-              value={dischargeDate}
-              onChange={(event) => setDischargeDate(event.target.value)}
+            <DatePicker
+              sx={{ marginY: 2 }}
+              label="Discharge date *"
+              value={dayjs(dischargeDate)}
+              onChange={(value) => {
+                if (value)
+                  setDischargeDate(dayjs(value.toDate()).format('YYYY-MM-DD'));
+              }}
             />
             <TextField
               required
               fullWidth
               multiline
               margin="normal"
-              id="dischargeCriteria"
+              id="discharge-criteria"
               label="Discharge Criteria"
               value={dischargeCriteria}
               onChange={(event) => setDischargeCriteria(event.target.value)}
             />
-            <TextField
-              fullWidth
-              margin="normal"
-              id="diagnosisCodes"
-              label="Diagnosis codes"
-              value={diagnosisCodes.join(', ')}
-              onChange={(event) =>
-                setDiagnosisCodes(event.target.value.split(', '))
-              }
-            />
+            <div>
+              <FormControl sx={{ marginY: 2, width: 300 }}>
+                <InputLabel id="diagnosis-codes-label">Chip</InputLabel>
+                <Select
+                  labelId="diagnosis-codes-label"
+                  id="diagnosis-codes"
+                  multiple
+                  value={diagnosisCodes}
+                  onChange={(event) => {
+                    setDiagnosisCodes(event.target.value as string[]);
+                  }}
+                  input={
+                    <OutlinedInput id="select-diagnosis-codes" label="Chip" />
+                  }
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} />
+                      ))}
+                    </Box>
+                  )}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 48 * 4.5 + 8,
+                        width: 250,
+                      },
+                    },
+                  }}
+                >
+                  {diagnoses.map((d) => (
+                    <MenuItem key={d.code} value={d.code}>
+                      {d.code}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
             <Button sx={{ marginY: 2 }} variant="contained" type="submit">
               ADD
             </Button>
@@ -277,14 +360,14 @@ const PatientPage = ({ diagnoses }: Props) => {
               value={description}
               onChange={(event) => setDescription(event.target.value)}
             />{' '}
-            <TextField
-              required
-              margin="normal"
-              id="date"
-              label="Date"
-              value={date}
-              onChange={(event) => setDate(event.target.value)}
-            />{' '}
+            <DatePicker
+              sx={{ marginY: 2 }}
+              label="Date *"
+              value={dayjs(date)}
+              onChange={(value) => {
+                if (value) setDate(dayjs(value.toDate()).format('YYYY-MM-DD'));
+              }}
+            />
             <TextField
               required
               fullWidth
@@ -298,38 +381,67 @@ const PatientPage = ({ diagnoses }: Props) => {
               required
               fullWidth
               margin="normal"
-              id="employerName"
+              id="employer-name"
               label="Employer name"
               value={employerName}
               onChange={(event) => setEmployerName(event.target.value)}
             />
-            <TextField
-              required
-              multiline
-              margin="normal"
-              id="startDate"
-              label="Sick leave start date"
-              value={startDate}
-              onChange={(event) => setStartDate(event.target.value)}
+            <DatePicker
+              sx={{ marginY: 2 }}
+              label="Sick leave start"
+              value={dayjs(startDate)}
+              onChange={(value) => {
+                if (value)
+                  setStartDate(dayjs(value.toDate()).format('YYYY-MM-DD'));
+              }}
             />
-            <TextField
-              required
-              margin="normal"
-              id="endDate"
-              label="Sick leave end date"
-              value={endDate}
-              onChange={(event) => setEndDate(event.target.value)}
+            <DatePicker
+              sx={{ marginY: 2 }}
+              label="Sick leave end"
+              value={dayjs(endDate)}
+              onChange={(value) => {
+                if (value)
+                  setEndDate(dayjs(value.toDate()).format('YYYY-MM-DD'));
+              }}
             />
-            <TextField
-              fullWidth
-              margin="normal"
-              id="endDate"
-              label="Diagnosis codes"
-              value={diagnosisCodes.join(', ')}
-              onChange={(event) =>
-                setDiagnosisCodes(event.target.value.split(', '))
-              }
-            />
+            <div>
+              <FormControl sx={{ marginY: 2, width: 300 }}>
+                <InputLabel id="diagnosis-codes-label">Chip</InputLabel>
+                <Select
+                  labelId="diagnosis-codes-label"
+                  id="diagnosis-codes"
+                  multiple
+                  value={diagnosisCodes}
+                  onChange={(event) => {
+                    setDiagnosisCodes(event.target.value as string[]);
+                  }}
+                  input={
+                    <OutlinedInput id="select-diagnosis-codes" label="Chip" />
+                  }
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} />
+                      ))}
+                    </Box>
+                  )}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 48 * 4.5 + 8,
+                        width: 250,
+                      },
+                    },
+                  }}
+                >
+                  {diagnoses.map((d) => (
+                    <MenuItem key={d.code} value={d.code}>
+                      {d.code}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
             <Button sx={{ marginY: 2 }} variant="contained" type="submit">
               ADD
             </Button>

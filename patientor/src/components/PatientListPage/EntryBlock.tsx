@@ -1,7 +1,7 @@
 import { Diagnosis, Entry } from '../../types';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
-import WorkIcon from '@mui/icons-material/Work';
+import WorkIcon from '@mui/icons-material/Work';import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Box, Card, CardContent } from '@mui/material';
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
   diagnoses: Diagnosis[];
 }
 
-const icons = ['💚', '💛', '🧡', '❤️'];
+const icons = [<FavoriteIcon style={{color: 'green'}}/>, <FavoriteIcon style={{color: 'yellow'}}/>, <FavoriteIcon style={{color: 'orange'}}/>, <FavoriteIcon style={{color: 'red'}}/>];
 
 const EntryBlock = ({ entry, diagnoses }: Props) => {
   switch (entry.type) {
